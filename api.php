@@ -24,26 +24,26 @@ if ($search) {
 	if ($_GET['entity'] == 'id') {
 		$url = 'https://itunes.apple.com/lookup?id='.urlencode($search).'&country='.$_GET['country'];
 	}
-	
-	$ch = curl_init(); 
-	curl_setopt($ch, CURLOPT_URL, $url); 
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5); 
+
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	$json = curl_exec($ch); 
+	$json = curl_exec($ch);
 
 	if ($errno = curl_errno($ch)) {
 	    echo json_encode(array('error' => "We were unable to connect to iTunes. Please try again shortly."));
 	    exit;
 	}
 
-	curl_close($ch);    
+	curl_close($ch);
 
 	$obj = json_decode($json);
 
 
 	foreach ($obj->results as $result) {
-		
+
 		$data = array();
 		$data['url'] = str_replace('100x100', '600x600', $result->artworkUrl100);
 
@@ -102,7 +102,7 @@ if ($search) {
 			$data['width'] = $width;
 			$data['height'] = $height;
 			$data['warning'] = $warning;
-			$results[] = $data;	
+			$results[] = $data;
 		}
 	}
 }
