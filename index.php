@@ -19,7 +19,7 @@
                 <option value="id">Apple ID (Movies)</option>
                 <option value="audiobook">Audiobook</option>
                 <option value="ebook">iBook</option>
-                <option value="musicVideo">Music Video (may not work)</option>
+                <option value="musicVideo">Music Video (May Not Work)</option>
                 <option value="movie">Movie</option>
                 <option value="podcast">Podcast</option>
                 <option value="shortFilm">Short Film</option>
