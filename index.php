@@ -13,7 +13,8 @@
         <h1>iTunes Artwork Finder</h1>
         <form action="" method="get" accept-charset="utf-8" id="iTunesSearch" class="form-inline">
             <select name="entity" id="entity" class="form-control">
-                <option value="album">Album</option>
+                <option value="album">Artist And Or Album</option>
+                <option value="idAlbum">Apple ID (Album)</option>
                 <option value="software">App</option>
                 <option value="id">Apple ID (Movies)</option>
                 <option value="audiobook">Audiobook</option>
