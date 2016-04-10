@@ -207,7 +207,7 @@ function performSearch() {
                     } else {
                         html += '<p><a href="./app/?url='+encodeURIComponent(result.appstore)+'" target="_blank">View screenshots / videos</a></p>';
                     }
-                    html += '<a href="'+result.url+'" target="_blank"><img src="'+result.url+'" alt="iTunes Artwork for \''+result.title+'\'" class="img-responsive"></a>';
+                    html += '<a href="'+result.hires+'" target="_blank"><img src="'+result.url+'" alt="iTunes Artwork for \''+result.title+'\'" class="img-responsive"></a>';
                     html += '</div>';
 
                     $('#results').append(html);
