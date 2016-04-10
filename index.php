@@ -16,7 +16,7 @@
                 <option value="album">Artist And Or Album</option>
                 <option value="idAlbum">Apple ID (Album)</option>
                 <option value="software">App</option>
-                <option value="id">Apple ID (Movies)</option>
+                <option value="id">Apple ID (Movie)</option>
                 <option value="audiobook">Audiobook</option>
                 <option value="ebook">iBook</option>
                 <option value="musicVideo">Music Video (May Not Work)</option>
