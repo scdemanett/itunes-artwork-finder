@@ -1,14 +1,64 @@
+@font-face{ 
+  font-family: 'Open Sans Regular';
+  src: url('../fonts/open-sans-regular.eot');
+  src: url('../fonts/open-sans-regular.eot?iefix') format('eot'),
+       url('../fonts/open-sans-regular.woff') format('woff'),
+       url('../fonts/open-sans-regular.ttf') format('truetype'),
+       url('../fonts/open-sans-regular.svg#open_sansregular') format('svg');
+}
+
+@font-face{ 
+  font-family: 'Open Sans Condensed Bold';
+  src: url('../fonts/open-sans-cond-bold.eot');
+  src: url('../fonts/open-sans-cond-bold.eot?iefix') format('eot'),
+       url('../fonts/open-sans-cond-bold.woff') format('woff'),
+       url('../fonts/open-sans-cond-bold.ttf') format('truetype'),
+       url('../fonts/open-sans-cond-bold.svg#open_sans_condensedbold') format('svg');
+}
+
 body{
-  padding-top: 124px;
+  padding-top: 175px;
+  font-family: "Open Sans Regular";
+}
+
+.item h3, .item p{
+  font-family: "Open Sans Condensed Bold";
 }
 
 .search{
-  text-align: center;
   margin-bottom: 20px;
 }
 
-#submit, .form-control {
-  margin-top: 5px !important;
+.glyphicon{
+  vertical-align: middle;
+  margin-left: 15px;
+  margin-right: 15px;
+  top: 0px;
+}
+
+#img-size-slider-container{
+  margin-top: 15px;
+}
+
+#img-size-slider .slider-track, #img-size-slider .slider-selection {
+  background-image: -webkit-linear-gradient(top, #e0e0e0 0%, #ffffff 100%);
+  background-image: -o-linear-gradient(top, #e0e0e0 0%, #ffffff 100%);
+  background-image: linear-gradient(to bottom, #e0e0e0 0%, #ffffff 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffe0e0e0e', endColorstr='#ffffffff', GradientType=0);
+  -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+}
+
+#img-size-slider .slider-handle{
+  background-color: #999999;
+  background-image: -webkit-linear-gradient(top, #999999 0%, #777777 100%);
+  background-image: -o-linear-gradient(top, #999999 0%, #777777 100%);
+  background-image: linear-gradient(to bottom, #999999 0%, #777777 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff999999', endColorstr='#ff777777', GradientType=0);
+}
+
+#submit{
+  margin-top: -1px;
 }
 
 #results{
@@ -24,14 +74,12 @@ body{
   text-align: center;
 }
 
-@media (min-width: 768px) and (max-width: 850px) {
+@media (max-width: 845.5px) {
   body {
-    padding-top: 163px !important;
+    padding-top: 335px;
   }
-}
 
-@media (max-width: 767px) {
-  body {
-    padding-top: 236px !important;
+  #img-size-slider-container{
+    margin-top: 0px;
   }
 }

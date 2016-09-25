@@ -199,9 +199,9 @@ function performSearch() {
             } else {
                 for (var i = 0; i < data.length; i++) {
                     var result = data[i];
-                    console.log(result.title);
+                    // console.log(result.title);
 
-                    var html = '<div><h3>'+result.title+'</h3>';
+                    var html = '<div class="item"><h3>'+result.title+'</h3>';
                     if (entity != 'software') {
                         html += '<p><a href="'+result.url+'" target="_blank">Standard Resolution</a> | <a href="'+result.hires+'" target="_blank">High Resolution</a> <em><small>'+result.warning+'</small></em></p>';
                     } else {
@@ -212,9 +212,11 @@ function performSearch() {
 
                     $('#results').append(html);
                 };
+                //Calls function in bootstrap-slider-custom.js
+                imgSliderEnable();
             }
         }
-        $('#results').append('<p>If the item you are searching for is not available on iTunes, this tool will not find it. Please do not email me asking for specific items if they are not available on iTunes! I recommend both <a href="https://code.google.com/p/subler/">Subler</a> and <a href="https://www.google.co.uk/imghp?gws_rd=ssl">Google Image Search</a> as good alternative places to find artwork.</p>');
+        $('#results').append('<p>If the item you are searching for is not available on iTunes, this tool will not find it. Please do not email me asking for specific items if they are not available on iTunes! I recommend both <a href="https://sourceforge.net/projects/album-art" target="_blank">Album Art Downloader</a> and <a href="https://images.google.com" target="_blank">Google Image Search</a> as good alternative places to find artwork.</p>');
 
     });
 }
