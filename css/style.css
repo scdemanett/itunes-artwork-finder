@@ -31,9 +31,15 @@ body{
 
 .glyphicon{
   vertical-align: middle;
-  margin-left: 15px;
-  margin-right: 15px;
   top: 0px;
+}
+
+.glyphicon-th{
+  margin-right: 15px;
+}
+
+.glyphicon-th-large{
+  margin-left: 15px;
 }
 
 #img-size-slider-container{
@@ -74,12 +80,42 @@ body{
   text-align: center;
 }
 
+.footer{
+  margin-top: 15px;
+}
+
 @media (max-width: 845.5px) {
   body {
-    padding-top: 335px;
+    padding-top: 325px;
   }
 
   #img-size-slider-container{
     margin-top: 0px;
+  }
+}
+
+@media (max-width: 767.5px) {
+  body {
+    padding-top: 155px;
+  }
+
+  h1 {
+    font-size: 32px;
+  }
+
+  #search-toggle{
+    display: block;
+    margin-bottom: 15px;
+  }
+
+  #search-toggle>.glyphicon:before {
+    content: "\e260";
+  }
+  #search-toggle.collapsed>.glyphicon:before {
+      content: "\e259";
+  }
+
+  #search-toggle>.glyphicon{
+    margin-right: 15px;
   }
 }

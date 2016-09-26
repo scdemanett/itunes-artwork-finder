@@ -216,7 +216,7 @@ function performSearch() {
                 imgSliderEnable();
             }
         }
-        $('#results').append('<p>If the item you are searching for is not available on iTunes, this tool will not find it. Please do not email me asking for specific items if they are not available on iTunes! I recommend both <a href="https://sourceforge.net/projects/album-art" target="_blank">Album Art Downloader</a> and <a href="https://images.google.com" target="_blank">Google Image Search</a> as good alternative places to find artwork.</p>');
+        $('#results').append('<p class="footer">If the item you are searching for is not available on iTunes, this tool will not find it. Please do not email me asking for specific items if they are not available on iTunes! I recommend both <a href="https://sourceforge.net/projects/album-art" target="_blank">Album Art Downloader</a> and <a href="https://images.google.com" target="_blank">Google Image Search</a> as good alternative places to find artwork.</p>');
 
     });
 }
