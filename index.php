@@ -24,7 +24,9 @@
                             <select name="entity" id="entity" class="form-control">
                                 <option value="album">Artist And Or Album</option>
                                 <option value="idAlbum">Apple ID (Album)</option>
-                                <option value="software">App</option>
+                                <option value="software">App (iPhone or Universal)</option>
+                                <option value="iPadSoftware">App (iPad)</option>
+                                <option value="macSoftware">App (macOS)</option>
                                 <option value="id">Apple ID (Movie)</option>
                                 <option value="audiobook">Audiobook</option>
                                 <option value="ebook">iBook</option>

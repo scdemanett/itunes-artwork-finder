@@ -1,3 +1,5 @@
+var pathToAPI = 'api.php'; // replace with your path to the api.php file
+
 var countries = {
     ae: 'United Arab Emirates',
     ag: 'Antigua and Barbuda',
@@ -58,7 +60,7 @@ var countries = {
     hk: 'Hong Kong',
     hn: 'Honduras',
     hr: 'Croatia',
-    hu: 'Hungaria',
+    hu: 'Hungary',
     id: 'Indonesia',
     ie: 'Ireland',
     il: 'Israel',
@@ -157,14 +159,14 @@ var countries = {
 }
 
 function getSearchParameters() {
-      var prmstr = window.location.search.substr(1);
-      return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
+    var prmstr = window.location.search.substr(1);
+    return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
 }
 
-function transformToAssocArray( prmstr ) {
+function transformToAssocArray(prmstr) {
     var params = {};
     var prmarr = prmstr.split("&");
-    for ( var i = 0; i < prmarr.length; i++) {
+    for (var i = 0; i < prmarr.length; i++) {
         var tmparr = prmarr[i].split("=");
         params[tmparr[0]] = decodeURIComponent(tmparr[1]);
     }
@@ -187,57 +189,91 @@ function performSearch() {
         type: "GET",
         crossDomain: true,
         url: 'api.php',
-        data: {query: query, entity: entity, country: country},
+        data: {
+            query: query,
+            entity: entity,
+            country: country,
+            type: 'request'
+        },
         dataType: 'json'
-    }).done(function(data) {
-        $('#results').html('');
-        if (data.error) {
-                $('#results').append('<h3>'+data.error+'</h3>');
-        } else {
-            if (!data.length) {
-                $('#results').append('<h3>No results found.</h3>');
-            } else {
-                for (var i = 0; i < data.length; i++) {
-                    var result = data[i];
-                    // console.log(result.title);
+    }).done(function (data) {
 
-                    var html = '<div class="item align-self-end px-2 pb-5"><h3>'+result.title+'</h3>';
-                    if (entity != 'software') {
-                        html += '<p class="mb-2"><a href="'+result.url+'" target="_blank">Standard Resolution</a> | <a href="'+result.hires+'" target="_blank">High Resolution</a> <em><small>'+result.warning+'</small></em></p>';
+        $.ajax({
+
+            type: "GET",
+            crossDomain: true,
+            url: data.url,
+            data: {},
+            dataType: 'jsonp'
+
+        }).done(function (data) {
+
+            // console.log(data);
+
+            $.ajax({
+
+                type: "POST",
+                crossDomain: true,
+                url: pathToAPI,
+                data: {
+                    json: JSON.stringify(data),
+                    type: 'data',
+                    entity: entity
+                },
+                dataType: 'json'
+
+            }).done(function (data) {
+
+                $('#results').html('');
+                if (data.error) {
+                    $('#results').append('<h3>' + data.error + '</h3>');
+                } else {
+                    if (!data.length) {
+                        $('#results').append('<h3>No results found.</h3>');
                     } else {
-                        html += '<p><a href="./app/?url='+encodeURIComponent(result.appstore)+'" target="_blank">View screenshots / videos</a></p>';
+                        for (var i = 0; i < data.length; i++) {
+                            var result = data[i];
+                            // console.log(result.title);
+
+                            var html = '<div class="item align-self-end px-2 pb-5"><h3>' + result.title + '</h3>';
+                            if (entity != 'software' && entity != 'iPadSoftware' && entity != 'macSoftware') {
+                                html += '<p class="mb-2"><a href="' + result.url + '" target="_blank">Standard Resolution</a> | <a href="' + result.hires + '" target="_blank">High Resolution</a> <em><small>' + result.warning + '</small></em></p>';
+                            } else if (entity == 'software' || entity == 'iPadSoftware') {
+                                html += '<p><a href="./app/?url=' + encodeURIComponent(result.appstore) + '&country=' + country + '" target="_blank">View screenshots / videos</a></p>';
+                            }
+                            html += '<a href="' + result.hires + '" target="_blank"><img src="' + result.url + '" alt="iTunes Artwork for \'' + result.title + '\'" class="img-fluid"></a>';
+                            html += '</div>';
+
+                            $('#results').append(html);
+                        };
+                        //Calls function in bootstrap-slider-custom.js
+                        imgSliderEnable();
                     }
-                    html += '<a href="'+result.hires+'" target="_blank"><img src="'+result.url+'" alt="iTunes Artwork for \''+result.title+'\'" class="img-fluid"></a>';
-                    html += '</div>';
+                }
+                $('#results').append('<p class="footer">If the item you are searching for is not available on iTunes, this tool will not find it. Please do not email me asking for specific items if they are not available on iTunes! I recommend both <a href="https://sourceforge.net/projects/album-art" target="_blank">Album Art Downloader</a> and <a href="https://images.google.com" target="_blank">Google Image Search</a> as good alternative places to find artwork.</p>');
 
-                    $('#results').append(html);
-                };
-                //Calls function in bootstrap-slider-custom.js
-                imgSliderEnable();
-            }
-        }
-        $('#results').append('<p class="footer">If the item you are searching for is not available on iTunes, this tool will not find it. Please do not email me asking for specific items if they are not available on iTunes! I recommend both <a href="https://sourceforge.net/projects/album-art" target="_blank">Album Art Downloader</a> and <a href="https://images.google.com" target="_blank">Google Image Search</a> as good alternative places to find artwork.</p>');
-
+            });
+        });
     });
 }
 
-$(document).ready(function() {
+$(document).ready(function () {
 
 
-	var sortable = [];
-	for (var key in countries) {
-		sortable.push([key, countries[key]]);
-	}
-    sortable.sort(function(a, b) {
-    	if(a[1] < b[1]) return 1;
-	    if(a[1] > b[1]) return -1;
-	    return 0;
+    var sortable = [];
+    for (var key in countries) {
+        sortable.push([key, countries[key]]);
+    }
+    sortable.sort(function (a, b) {
+        if (a[1] < b[1]) return 1;
+        if (a[1] > b[1]) return -1;
+        return 0;
     });
 
-	for (var i = sortable.length - 1; i >= 0; i--) {
-		var array = sortable[i];
-		$('#country').append('<option value="'+array[0]+'">'+array[1]+'</option>');
-	};
+    for (var i = sortable.length - 1; i >= 0; i--) {
+        var array = sortable[i];
+        $('#country').append('<option value="' + array[0] + '">' + array[1] + '</option>');
+    };
 
     var params = getSearchParameters();
     if (params.entity && params.query && params.country) {
@@ -247,10 +283,9 @@ $(document).ready(function() {
         performSearch();
     };
 
-	$('#iTunesSearch').submit(function() {
-		performSearch();
-		return false;
-	});
-
+    $('#iTunesSearch').submit(function () {
+        performSearch();
+        return false;
+    });
 
 });
