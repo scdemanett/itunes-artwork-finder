@@ -201,13 +201,13 @@ function performSearch() {
                     var result = data[i];
                     // console.log(result.title);
 
-                    var html = '<div class="item"><h3>'+result.title+'</h3>';
+                    var html = '<div class="item align-self-end px-2 pb-5"><h3>'+result.title+'</h3>';
                     if (entity != 'software') {
-                        html += '<p><a href="'+result.url+'" target="_blank">Standard Resolution</a> | <a href="'+result.hires+'" target="_blank">High Resolution</a> <em><small>'+result.warning+'</small></em></p>';
+                        html += '<p class="mb-2"><a href="'+result.url+'" target="_blank">Standard Resolution</a> | <a href="'+result.hires+'" target="_blank">High Resolution</a> <em><small>'+result.warning+'</small></em></p>';
                     } else {
                         html += '<p><a href="./app/?url='+encodeURIComponent(result.appstore)+'" target="_blank">View screenshots / videos</a></p>';
                     }
-                    html += '<a href="'+result.hires+'" target="_blank"><img src="'+result.url+'" alt="iTunes Artwork for \''+result.title+'\'" class="img-responsive"></a>';
+                    html += '<a href="'+result.hires+'" target="_blank"><img src="'+result.url+'" alt="iTunes Artwork for \''+result.title+'\'" class="img-fluid"></a>';
                     html += '</div>';
 
                     $('#results').append(html);
