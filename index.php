@@ -44,12 +44,12 @@
                             <select name="country" id="country" class="form-control">
                                 <option value='us'>United States of America</option>
                                 <option value='gb'>United Kingdom</option>
+                                <option value='jp'>Japan</option>
                                 <option value=''>---</option>
                             </select>
                         </div>
                         <div class="input-group mt-2 mt-lg-0 ml-lg-2">
-                            <button type="submit" id="submit" class="btn btn-secondary d-none d-md-block mx-auto">Get
-                                Artwork</button>
+                            <button type="submit" id="submit" class="btn btn-secondary d-none d-md-block mx-auto">GetArtwork</button>
                         </div>
                     </form>
                 </div>
