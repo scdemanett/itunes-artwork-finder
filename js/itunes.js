@@ -226,6 +226,7 @@ function performSearch() {
 
                 $('#results').html('');
                 if (data.error) {
+                    $('#results').addClass('d-flex justify-content-center flex-wrap');
                     $('#results').append('<h3>' + data.error + '</h3>');
                 } else {
                     if (!data.length) {
