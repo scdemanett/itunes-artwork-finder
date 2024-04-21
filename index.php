@@ -49,7 +49,7 @@
                             </select>
                         </div>
                         <div class="input-group mt-2 mt-lg-0 ml-lg-2 justify-content-center">
-                            <button type="submit" id="submit" class="btn btn-secondary d-md-block">GetArtwork</button>
+                            <button type="submit" id="submit" class="btn btn-secondary d-md-block">Get Artwork</button>
                             <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="sr-only">Toggle Dropdown</span>
                             </button>
