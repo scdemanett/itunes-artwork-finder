@@ -8,7 +8,7 @@
     <title>iTunes Artwork Finder</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/bootstrap-slider.min.css">
-    <link rel="stylesheet" href="css/style.min.css">
+    <link rel="stylesheet" href="css/style.min.css?V=1.0.0">
 </head>
 
 <body class="bg-secondary">
@@ -82,7 +82,7 @@
 
     </div>
     <script src="js/jquery-2.2.4.min.js"></script>
-    <script src="js/itunes.min.js"></script>
+    <script src="js/itunes.min.js?v=1.0.0"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/bootstrap-slider.min.js"></script>
     <script src="js/bootstrap-slider-custom.min.js"></script>
