@@ -188,7 +188,7 @@ function performSearch() {
     $.ajax({
         type: "GET",
         crossDomain: true,
-        url: 'api.php',
+        url: pathToAPI,
         data: {
             query: query,
             entity: entity,
@@ -207,8 +207,6 @@ function performSearch() {
             dataType: 'jsonp'
 
         }).done(function (data) {
-
-            // console.log(data);
 
             $.ajax({
 
@@ -234,15 +232,17 @@ function performSearch() {
                     } else {
                         for (var i = 0; i < data.length; i++) {
                             var result = data[i];
+
                             // console.log(result.title);
 
                             var html = '<div class="item align-self-end px-2 pb-5"><h3>' + result.title + '</h3>';
                             if (entity != 'software' && entity != 'iPadSoftware' && entity != 'macSoftware') {
-                                html += '<p class="mb-2"><a href="' + result.url + '" target="_blank">Standard Resolution</a> | <a href="' + result.hires + '" target="_blank">High Resolution</a> <em><small>' + result.warning + '</small></em></p>';
+                                var uncompressed = result.uncompressed ? '<a href="' + result.uncompressed + '" target="_blank">Uncompressed High Resolution</a>' : '<a href="'+result.hires+'" target="_blank">High Resolution</a>';
+                                html += '<p class="mb-2"><a href="' + result.url + '" target="_blank">Standard Resolution</a> | ' + uncompressed + '</p>';
                             } else if (entity == 'software' || entity == 'iPadSoftware') {
                                 html += '<p><a href="./app/?url=' + encodeURIComponent(result.appstore) + '&country=' + country + '" target="_blank">View screenshots / videos</a></p>';
                             }
-                            html += '<a href="' + result.hires + '" target="_blank"><img src="' + result.url + '" alt="iTunes Artwork for \'' + result.title + '\'" class="img-fluid"></a>';
+                            html += '<a href="' + (result.uncompressed ? result.uncompressed : result.hires) + '" target="_blank" title="iTunes Artwork for \''+result.title+'\'" download="'+result.title+'"><img src="' + result.url + '" alt="iTunes Artwork for \'' + result.title + '\'" class="img-fluid"></a>';
                             html += '</div>';
 
                             $('#results').append(html);
@@ -259,8 +259,6 @@ function performSearch() {
 }
 
 $(document).ready(function () {
-
-
     var sortable = [];
     for (var key in countries) {
         sortable.push([key, countries[key]]);
@@ -277,10 +275,20 @@ $(document).ready(function () {
     };
 
     var params = getSearchParameters();
-    if (params.entity && params.query && params.country) {
-        $('#query').val(params.query);
+
+    if (params.entity) {
         $('#entity').val(params.entity);
+    }
+
+    if (params.query) {
+        $('#query').val(params.query);
+    }
+
+    if (params.country) {
         $('#country').val(params.country);
+    }
+
+    if (params.entity && params.query && params.country) {
         performSearch();
     };
 
@@ -288,5 +296,4 @@ $(document).ready(function () {
         performSearch();
         return false;
     });
-
 });
