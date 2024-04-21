@@ -19,7 +19,7 @@
                 <a id="searchToggle" class="collapsed d-block d-md-none" data-toggle="collapse"
                     href="#iTunesSearch">Toggle Search</a>
                 <div id="iTunesSearch" class="navbar-collapse collapse">
-                    <form action="" method="get" accept-charset="utf-8" class="form-inline">
+                    <form id="iTunesSearchForm" action="" method="get" accept-charset="utf-8" class="form-inline">
                         <div class="input-group">
                             <select name="entity" id="entity" class="form-control">
                                 <option value="album">Artist And Or Album</option>
@@ -48,8 +48,14 @@
                                 <option value=''>---</option>
                             </select>
                         </div>
-                        <div class="input-group mt-2 mt-lg-0 ml-lg-2">
-                            <button type="submit" id="submit" class="btn btn-secondary d-none d-md-block mx-auto">GetArtwork</button>
+                        <div class="input-group mt-2 mt-lg-0 ml-lg-2 justify-content-center">
+                            <button type="submit" id="submit" class="btn btn-secondary d-md-block">GetArtwork</button>
+                            <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <div class="dropdown-menu">
+                                <a id="reset" class="dropdown-item" href="javascript:void(0);">Reset</a>
+                            </div>
                         </div>
                     </form>
                 </div>

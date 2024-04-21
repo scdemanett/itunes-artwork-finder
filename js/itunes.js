@@ -158,6 +158,30 @@ var countries = {
     zw: 'Zimbabwe'
 }
 
+function updateUrlWithParams(entity, query, country) {
+    var newUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}?entity=${encodeURIComponent(entity)}&query=${encodeURIComponent(query)}&country=${encodeURIComponent(country)}`;
+    window.history.pushState({path:newUrl}, '', newUrl);
+}
+
+function downloadImage(imageUrl, imageName) {
+    fetch(imageUrl, {
+        mode: 'cors',
+        credentials: 'same-origin'
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        const blobUrl = URL.createObjectURL(blob);
+        const downloadLink = document.createElement('a');
+        downloadLink.href = blobUrl;
+        downloadLink.download = imageName;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        URL.revokeObjectURL(blobUrl);
+    })
+    .catch(error => console.error('Download failed:', error));
+}
+
 function getSearchParameters() {
     var prmstr = window.location.search.substr(1);
     return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
@@ -174,8 +198,9 @@ function transformToAssocArray(prmstr) {
 }
 
 function performSearch() {
-    $('#results').html('');
-    $('#results').append('<h3>Searching...</h3>');
+    var $results = $('#results');
+    $results.html('');
+    $results.append('<h3>Searching...</h3>');
 
     var query = $('#query').val();
     if (!query.length) {
@@ -197,19 +222,14 @@ function performSearch() {
         },
         dataType: 'json'
     }).done(function (data) {
-
         $.ajax({
-
             type: "GET",
             crossDomain: true,
             url: data.url,
             data: {},
             dataType: 'jsonp'
-
         }).done(function (data) {
-
             $.ajax({
-
                 type: "POST",
                 crossDomain: true,
                 url: pathToAPI,
@@ -219,39 +239,38 @@ function performSearch() {
                     entity: entity
                 },
                 dataType: 'json'
-
             }).done(function (data) {
-
-                $('#results').html('');
+                $results.html('');
                 if (data.error) {
-                    $('#results').addClass('d-flex justify-content-center flex-wrap');
-                    $('#results').append('<h3>' + data.error + '</h3>');
+                    $results.addClass('d-flex justify-content-center flex-wrap');
+                    $results.append(`<h3>${data.error}</h3>`);
                 } else {
                     if (!data.length) {
-                        $('#results').append('<h3>No results found.</h3>');
+                        $results.append('<h3>No results found.</h3>');
                     } else {
                         for (var i = 0; i < data.length; i++) {
                             var result = data[i];
 
                             // console.log(result.title);
 
-                            var html = '<div class="item align-self-end px-2 pb-5"><h3>' + result.title + '</h3>';
+                            var html = `<div class="item align-self-end px-2 pb-5"><h3>${result.title}</h3>`;
                             if (entity != 'software' && entity != 'iPadSoftware' && entity != 'macSoftware') {
-                                var uncompressed = result.uncompressed ? '<a href="' + result.uncompressed + '" target="_blank">Uncompressed High Resolution</a>' : '<a href="'+result.hires+'" target="_blank">High Resolution</a>';
-                                html += '<p class="mb-2"><a href="' + result.url + '" target="_blank">Standard Resolution</a> | ' + uncompressed + '</p>';
+                                var uncompressed = result.uncompressed ? `<a href="${result.uncompressed}" target="_blank">Uncompressed High Resolution</a>` : `<a href="${result.hires}" target="_blank">High Resolution</a>`;
+                                html += `<p class="mb-2"><a href="${result.url}" target="_blank">Standard Resolution</a> | ${uncompressed}</p>`;
                             } else if (entity == 'software' || entity == 'iPadSoftware') {
-                                html += '<p><a href="./app/?url=' + encodeURIComponent(result.appstore) + '&country=' + country + '" target="_blank">View screenshots / videos</a></p>';
+                                html += `<p><a href="${result.appstore}&country=${country}" target="_blank">View screenshots / videos</a></p>`;
                             }
-                            html += '<a href="' + (result.uncompressed ? result.uncompressed : result.hires) + '" target="_blank" title="iTunes Artwork for \''+result.title+'\'" download="'+result.title+'"><img src="' + result.url + '" alt="iTunes Artwork for \'' + result.title + '\'" class="img-fluid"></a>';
+                            html += `<a href="${result.uncompressed ? result.uncompressed : result.hires}" target="_blank" title="iTunes Artwork for '${result.title}'" onclick="event.preventDefault(); downloadImage('${result.uncompressed ? result.uncompressed : result.hires}', '${result.title.replace(/'/g, "\\'")} - Front (Hi-Res)')" class="d-block"><img src="${result.url}" alt="iTunes Artwork for '${result.title}'" class="img-fluid"></a>`;
+
                             html += '</div>';
 
-                            $('#results').append(html);
+                            $results.append(html);
                         };
                         //Calls function in bootstrap-slider-custom.js
                         imgSliderEnable();
                     }
                 }
-                $('#results').append('<p class="footer">If the item you are searching for is not available on iTunes, this tool will not find it. Please do not email me asking for specific items if they are not available on iTunes! I recommend both <a href="https://sourceforge.net/projects/album-art" target="_blank">Album Art Downloader</a> and <a href="https://images.google.com" target="_blank">Google Image Search</a> as good alternative places to find artwork.</p>');
+                $results.append('<p class="footer">If the item you are searching for is not available on iTunes, this tool will not find it. Please do not email me asking for specific items if they are not available on iTunes! I recommend both <a href="https://sourceforge.net/projects/album-art" target="_blank">Album Art Downloader</a> and <a href="https://images.google.com" target="_blank">Google Image Search</a> as good alternative places to find artwork.</p>');
 
             });
         });
@@ -271,29 +290,38 @@ $(document).ready(function () {
 
     for (var i = sortable.length - 1; i >= 0; i--) {
         var array = sortable[i];
-        $('#country').append('<option value="' + array[0] + '">' + array[1] + '</option>');
+        $('#country').append(`<option value="${array[0]}">${array[1]}</option>`);
     };
 
     var params = getSearchParameters();
-
-    if (params.entity) {
-        $('#entity').val(params.entity);
-    }
-
-    if (params.query) {
-        $('#query').val(params.query);
-    }
-
-    if (params.country) {
-        $('#country').val(params.country);
-    }
-
     if (params.entity && params.query && params.country) {
+        $('#entity').val(params.entity);
+        $('#query').val(params.query);
+        $('#country').val(params.country);
+
         performSearch();
-    };
+    }
 
     $('#iTunesSearch').submit(function () {
+        var entity = $('#entity').val() || 'tvSeason';
+        var query = $('#query').val();
+        var country = $('#country').val() || 'us';
+
+        if (!query.length) {
+            alert("Please enter a search query.");
+            return false;
+        }
+
         performSearch();
+
+        updateUrlWithParams(entity, query, country);
+
         return false;
+    });
+
+    $('#reset').click(function(event) {
+        event.preventDefault();
+        $('#iTunesSearchForm').get(0).reset();
+        window.location.href = window.location.origin + window.location.pathname;
     });
 });
