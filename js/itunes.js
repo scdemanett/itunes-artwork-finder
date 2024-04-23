@@ -163,7 +163,20 @@ function updateUrlWithParams(entity, query, country) {
     window.history.pushState({path:newUrl}, '', newUrl);
 }
 
-function downloadImage(imageUrl, imageName) {
+function formatImageName(title, entity) {
+    if (entity === 'album') {
+        const artistMatch = title.match(/\(by (.+)\)$/);
+        if (artistMatch) {
+            const artistName = artistMatch[1];
+            const titleWithoutArtist = title.replace(/\s*\(by .+\)$/, '');
+            return `${artistName} - ${titleWithoutArtist} - Front (Hi-Res)`;
+        }
+    }
+    return title;
+}
+
+function downloadImage(imageUrl, imageName, entity) {
+    const formattedImageName = formatImageName(imageName, entity);
     fetch(imageUrl, {
         mode: 'cors',
         credentials: 'same-origin'
@@ -173,7 +186,7 @@ function downloadImage(imageUrl, imageName) {
         const blobUrl = URL.createObjectURL(blob);
         const downloadLink = document.createElement('a');
         downloadLink.href = blobUrl;
-        downloadLink.download = imageName;
+        downloadLink.download = formattedImageName;
         document.body.appendChild(downloadLink);
         downloadLink.click();
         document.body.removeChild(downloadLink);
@@ -260,7 +273,7 @@ function performSearch() {
                             } else if (entity == 'software' || entity == 'iPadSoftware') {
                                 html += `<p><a href="${result.appstore}&country=${country}" target="_blank">View screenshots / videos</a></p>`;
                             }
-                            html += `<a href="${result.uncompressed ? result.uncompressed : result.hires}" target="_blank" title="iTunes Artwork for '${result.title}'" onclick="event.preventDefault(); downloadImage('${result.uncompressed ? result.uncompressed : result.hires}', '${result.title.replace(/'/g, "\\'")} - Front (Hi-Res)')" class="d-block"><img src="${result.url}" alt="iTunes Artwork for '${result.title}'" class="img-fluid"></a>`;
+                            html += `<a href="${result.uncompressed ? result.uncompressed : result.hires}" target="_blank" title="iTunes Artwork for '${result.title}'" onclick="event.preventDefault(); downloadImage('${result.uncompressed ? result.uncompressed : result.hires}', '${result.title.replace(/'/g, "\\'")}', '${entity}')" class="d-block"><img src="${result.url}" alt="iTunes Artwork for '${result.title}'" class="img-fluid"></a>`;
 
                             html += '</div>';
 
