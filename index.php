@@ -82,7 +82,7 @@
 
     </div>
     <script src="js/jquery-2.2.4.min.js"></script>
-    <script src="js/itunes.min.js?v=1.0.0"></script>
+    <script src="js/itunes.min.js?v=1.0.1"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/bootstrap-slider.min.js"></script>
     <script src="js/bootstrap-slider-custom.min.js"></script>
