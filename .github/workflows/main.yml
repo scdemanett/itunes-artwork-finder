@@ -23,13 +23,3 @@ jobs:
           **/.github*
           **/.github*/**
           **/node_modules/**
-    - name: Rename htaccess Go Live
-      shell: python
-      run: |
-        import ftplib
-        server = "${{ secrets.FTP_SERVER }}"
-        username = "${{ github.ref == 'refs/heads/main' && secrets.FTP_USERNAME || secrets.STAGING_FTP_USERNAME }}"
-        password = "${{ github.ref == 'refs/heads/main' && secrets.FTP_PASSWORD || secrets.STAGING_FTP_PASSWORD }}"
-        ftp = ftplib.FTP(server)
-        ftp.login(username, password)
-        ftp.quit()
