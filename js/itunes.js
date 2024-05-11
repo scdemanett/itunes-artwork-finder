@@ -163,26 +163,45 @@ function updateUrlWithParams(entity, query, country) {
     window.history.pushState({path:newUrl}, '', newUrl);
 }
 
-function formatImageName(title, entity) {
+function formatImageName(title, entity, extension) {
     if (entity === 'album') {
         const artistMatch = title.match(/\(by (.+)\)$/);
         if (artistMatch) {
             const artistName = artistMatch[1];
             const titleWithoutArtist = title.replace(/\s*\(by .+\)$/, '');
-            return `${artistName} - ${titleWithoutArtist} - Front (Hi-Res)`;
+            return `${artistName} - ${titleWithoutArtist} - Front (Hi-Res)${extension}`;
         }
     }
-    return title;
+    return title + extension;
 }
 
 function downloadImage(imageUrl, imageName, entity) {
-    const formattedImageName = formatImageName(imageName, entity);
     fetch(imageUrl, {
         mode: 'cors',
         credentials: 'same-origin'
     })
-    .then(response => response.blob())
-    .then(blob => {
+    .then(response => {
+        const contentType = response.headers.get('Content-Type');
+        let extension = '';
+        switch (contentType) {
+            case 'image/jpeg':
+            case 'image/jpg':
+                extension = '.jpg';
+                break;
+            case 'image/png':
+                extension = '.png';
+                break;
+            case 'image/gif':
+                extension = '.gif';
+                break;
+            default:
+                extension = '.jpg';
+                break;
+        }
+        return response.blob().then(blob => ({ blob, extension }));
+    })
+    .then(({ blob, extension }) => {
+        const formattedImageName = formatImageName(imageName, entity, extension);
         const blobUrl = URL.createObjectURL(blob);
         const downloadLink = document.createElement('a');
         downloadLink.href = blobUrl;
@@ -192,7 +211,10 @@ function downloadImage(imageUrl, imageName, entity) {
         document.body.removeChild(downloadLink);
         URL.revokeObjectURL(blobUrl);
     })
-    .catch(error => console.error('Download failed:', error));
+    .catch(error => {
+        console.error('Download failed:', error);
+        alert('Failed to download image. Please try again.');
+    });
 }
 
 function getSearchParameters() {
