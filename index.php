@@ -8,7 +8,7 @@
     <title>iTunes Artwork Finder</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/bootstrap-slider.min.css">
-    <link rel="stylesheet" href="css/style.min.css?V=1.0.0">
+    <link rel="stylesheet" href="css/style.min.css?V=1.0.1">
     <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="shortcut icon" href="favicon.ico" />
@@ -21,7 +21,10 @@
     <nav class="navbar navbar-dark bg-dark navbar-expand-md justify-content-center fixed-top">
         <div class="row">
             <div class="search col text-center">
-                <h1>iTunes Artwork Finder</h1>
+                <h1 class="site-title">
+                    <img src="favicon-96x96.png" alt="" width="40" height="40">
+                    iTunes Artwork Finder
+                </h1>
                 <a id="searchToggle" class="collapsed d-block d-md-none" data-toggle="collapse"
                     href="#iTunesSearch">Toggle Search</a>
                 <div id="iTunesSearch" class="navbar-collapse collapse">
