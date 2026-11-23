@@ -26,11 +26,21 @@ function siteUrlTags(siteUrl: string | undefined): Plugin {
     };
 }
 
+/** Adds the WebMCP origin trial token when VITE_WEBMCP_ORIGIN_TRIAL_TOKEN is set (see .env.example). */
+function originTrialTag(token: string | undefined): Plugin {
+    return {
+        name: 'origin-trial-tag',
+        transformIndexHtml(): HtmlTagDescriptor[] {
+            return token ? [{ tag: 'meta', attrs: { 'http-equiv': 'origin-trial', content: token }, injectTo: 'head-prepend' }] : [];
+        },
+    };
+}
+
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', 'VITE_');
     return {
         base,
-        plugins: [react(), siteUrlTags(env.VITE_SITE_URL)],
+        plugins: [react(), siteUrlTags(env.VITE_SITE_URL), originTrialTag(env.VITE_WEBMCP_ORIGIN_TRIAL_TOKEN)],
         build: {
             // Nest the output so Workers static asset paths match the public URL path.
             outDir: `dist${base}`,

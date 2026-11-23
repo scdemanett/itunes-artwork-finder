@@ -15,6 +15,7 @@ Find and download **full-resolution album covers and artwork from Apple Music, i
 - **Preview first.** Click any cover for a large preview; arrow keys move between results.
 - **Every store and country.** Search albums, Apple IDs, iPhone, iPad and Mac apps, audiobooks, books, music videos, movies, podcasts, short films and TV shows in 150+ country storefronts.
 - **Shareable searches.** The URL holds the search, so links and bookmarks reopen the same results.
+- **Works with AI agents (WebMCP).** In browsers that support [WebMCP](https://github.com/webmachinelearning/webmcp), an agent can search, check sizes, preview and download artwork through the page's tools instead of clicking around it.
 
 ## How it works
 
@@ -24,6 +25,19 @@ A small React app plus a Cloudflare Worker:
 - **Sizes** (`/api/meta`): the Worker uses HTTP Range requests to read each image's native dimensions and file sizes without downloading the whole file.
 - **Downloads** (`/api/download`): the Worker streams the image from Apple's CDN with `Content-Disposition: attachment`, so the file arrives with the right name. Only `*.mzstatic.com` URLs are accepted, so it can't be used as an open proxy.
 - Artwork URLs use Apple's `10000x10000-999` size. Larger sizes are rejected, and the old `/us/r1000/0/` "uncompressed" source URLs no longer work (HTTP 403).
+
+### Agent tools (WebMCP)
+
+`src/lib/webmcp.ts` registers four tools with `document.modelContext` when the browser supports it, and does nothing otherwise:
+
+| Tool | What it does |
+|---|---|
+| `search_artwork` | Searches by query, type and country, shows the results on the page and returns their ids |
+| `get_artwork_details` | Native dimensions, PNG/JPG sizes, download filename and full-size URLs for one result |
+| `preview_artwork` | Opens the on-screen preview of one result |
+| `download_artwork` | Downloads one result as PNG or JPG through the browser |
+
+Everything an agent does happens visibly on the page. WebMCP is a proposed standard; in Chrome it is available behind `chrome://flags/#enable-webmcp-testing` and as an origin trial (set `VITE_WEBMCP_ORIGIN_TRIAL_TOKEN` in `.env` to enable it on your domain). Google's [Model Context Tool Inspector](https://chromewebstore.google.com/detail/model-context-tool-inspec/gbpdfapgefenggkahomfgkhfehlcenpd) extension lets you list and call the tools by hand.
 
 The app is served under the base path `/itunes-artwork-finder`, set in `vite.config.ts` and `worker/index.ts`.
 

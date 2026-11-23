@@ -7,6 +7,7 @@ import { SearchForm } from './components/SearchForm';
 import { search, type SearchParams } from './lib/api';
 import { COUNTRIES } from './lib/countries';
 import { useArtworkMeta } from './lib/useArtworkMeta';
+import { useWebMcpTools, type SearchOutcome } from './lib/webmcp';
 
 const CARD_SIZE_KEY = 'artworkFinder.cardSize';
 const CARD_SIZE_MIN = 220;
@@ -46,7 +47,7 @@ export function App() {
     const meta = useArtworkMeta(results);
     const controller = useRef<AbortController | null>(null);
 
-    const runSearch = useCallback(async (next: SearchParams) => {
+    const runSearch = useCallback(async (next: SearchParams): Promise<SearchOutcome> => {
         controller.current?.abort();
         const current = new AbortController();
         controller.current = current;
@@ -57,20 +58,33 @@ export function App() {
             const found = await search(next, current.signal);
             setResults(found);
             setStatus({ kind: 'done' });
+            return { results: found };
         } catch (error) {
             if (current.signal.aborted) {
-                return;
+                return { error: 'The search was replaced by a newer one.' };
             }
+            const message = error instanceof Error ? error.message : 'Search failed. Please try again.';
             setResults([]);
-            setStatus({ kind: 'error', message: error instanceof Error ? error.message : 'Search failed. Please try again.' });
+            setStatus({ kind: 'error', message });
+            return { error: message };
         }
     }, []);
 
     const onSearch = (next: SearchParams) => {
         const url = `${window.location.pathname}?${new URLSearchParams({ ...next })}`;
         window.history.pushState(null, '', url);
-        void runSearch(next);
+        return runSearch(next);
     };
+
+    // Agent tools (WebMCP). A search from an agent also updates the form and URL, like a typed one.
+    useWebMcpTools({
+        search: (next) => {
+            setFormKey((k) => k + 1);
+            return onSearch(next);
+        },
+        current: () => ({ results, entity: params.entity }),
+        openPreview: setPreviewIndex,
+    });
 
     useEffect(() => {
         if (initial.query) {
@@ -109,7 +123,7 @@ export function App() {
                         <img src={`${import.meta.env.BASE_URL}favicon.svg`} alt="" width={32} height={32} />
                         <span>iTunes Artwork Finder</span>
                     </a>
-                    <SearchForm key={formKey} initial={params} busy={status.kind === 'loading'} onSearch={onSearch} />
+                    <SearchForm key={formKey} initial={params} busy={status.kind === 'loading'} onSearch={(next) => void onSearch(next)} />
                     <label className="size-control" title="Artwork size">
                         <GridSmallIcon />
                         <span className="sr-only">Artwork size</span>
