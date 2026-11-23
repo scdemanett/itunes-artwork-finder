@@ -52,26 +52,19 @@
             $data = array();
             $data['url'] = str_replace('100x100', '600x600', $result->artworkUrl100);
 
-            $hires = str_replace('100x100bb', '100000x100000-999', $result->artworkUrl100);
+            // Largest size Apple accepts (output is capped at the source's native size).
+            // PNG avoids a second round of lossy JPEG compression.
+            $hires = preg_replace('/100x100bb\.\w+$/', '10000x10000-999.png', $result->artworkUrl100);
             $parts = parse_url($hires);
             $hires = 'https://is5-ssl.mzstatic.com'.$parts['path'];
 
             $data['hires'] = $hires;
             $data['title'] = ($entity == 'movie') ? $result->trackName : $result->collectionName;
 
-            if ($_POST['entity'] == 'album' || $_POST['entity'] == 'idAlbum') {
-                $parts = explode('/image/thumb/', $hires);
-                if (count($parts) == 2) {
-                    $parts = explode('/', $parts[1]);
-                    array_pop($parts);
-                    $data['uncompressed'] = 'https://a5.mzstatic.com/us/r1000/0/'.implode('/', $parts);
-                }
-            }
-
             switch ($entity) {
                 case 'musicVideo':
                     $data['title'] = $result->trackName.' (by '.$result->artistName.')';
-                    $data['url'] = $hires;
+                    $data['url'] = preg_replace('/\.png$/', '.jpg', $hires);
                     $width = 640;
                     $height = 464;
                     break;

@@ -175,30 +175,95 @@ function formatImageName(title, entity, extension) {
     return title + extension;
 }
 
-function downloadImage(imageUrl, imageName, entity) {
+function getExtensionFromContentType(contentType) {
+    switch ((contentType || '').split(';')[0].trim()) {
+        case 'image/png':
+            return '.png';
+        case 'image/gif':
+            return '.gif';
+        default:
+            return '.jpg';
+    }
+}
+
+function formatBytes(bytes) {
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+function showDownloadProgress(linkEl) {
+    if (!linkEl) {
+        return null;
+    }
+    var overlay = document.createElement('div');
+    overlay.className = 'download-progress';
+    overlay.innerHTML = '<div class="download-progress-label">Starting download…</div>' +
+        '<div class="progress"><div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div></div>';
+    linkEl.appendChild(overlay);
+    linkEl.classList.add('downloading');
+    return {
+        update: function (received, total) {
+            var label = overlay.querySelector('.download-progress-label');
+            var bar = overlay.querySelector('.progress-bar');
+            if (total) {
+                var percent = Math.min(100, Math.round((received / total) * 100));
+                label.textContent = `${percent}% (${formatBytes(received)} of ${formatBytes(total)})`;
+                bar.classList.remove('progress-bar-striped', 'progress-bar-animated');
+                bar.style.width = percent + '%';
+                bar.setAttribute('aria-valuenow', percent);
+            } else {
+                label.textContent = `${formatBytes(received)} downloaded`;
+            }
+        },
+        remove: function () {
+            overlay.remove();
+            linkEl.classList.remove('downloading');
+        }
+    };
+}
+
+function readWithProgress(response, onProgress) {
+    var total = parseInt(response.headers.get('Content-Length'), 10) || 0;
+    if (!response.body || !response.body.getReader) {
+        return response.blob();
+    }
+    var reader = response.body.getReader();
+    var chunks = [];
+    var received = 0;
+    function pump() {
+        return reader.read().then(function (result) {
+            if (result.done) {
+                return new Blob(chunks, { type: response.headers.get('Content-Type') || '' });
+            }
+            chunks.push(result.value);
+            received += result.value.length;
+            onProgress(received, total);
+            return pump();
+        });
+    }
+    onProgress(0, total);
+    return pump();
+}
+
+function downloadImage(imageUrl, imageName, entity, linkEl) {
+    if (linkEl && linkEl.classList.contains('downloading')) {
+        return;
+    }
+    var progress = showDownloadProgress(linkEl);
+
     fetch(imageUrl, {
         mode: 'cors',
         credentials: 'same-origin'
     })
     .then(response => {
-        const contentType = response.headers.get('Content-Type');
-        let extension = '';
-        switch (contentType) {
-            case 'image/jpeg':
-            case 'image/jpg':
-                extension = '.jpg';
-                break;
-            case 'image/png':
-                extension = '.png';
-                break;
-            case 'image/gif':
-                extension = '.gif';
-                break;
-            default:
-                extension = '.jpg';
-                break;
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
         }
-        return response.blob().then(blob => ({ blob, extension }));
+        const extension = getExtensionFromContentType(response.headers.get('Content-Type'));
+        return readWithProgress(response, (received, total) => {
+            if (progress) {
+                progress.update(received, total);
+            }
+        }).then(blob => ({ blob, extension }));
     })
     .then(({ blob, extension }) => {
         const formattedImageName = formatImageName(imageName, entity, extension);
@@ -209,11 +274,16 @@ function downloadImage(imageUrl, imageName, entity) {
         document.body.appendChild(downloadLink);
         downloadLink.click();
         document.body.removeChild(downloadLink);
-        URL.revokeObjectURL(blobUrl);
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
     })
     .catch(error => {
         console.error('Download failed:', error);
         alert('Failed to download image. Please try again.');
+    })
+    .finally(() => {
+        if (progress) {
+            progress.remove();
+        }
     });
 }
 
@@ -295,7 +365,7 @@ function performSearch() {
                             } else if (entity == 'software' || entity == 'iPadSoftware') {
                                 html += `<p><a href="${result.appstore}&country=${country}" target="_blank">View screenshots / videos</a></p>`;
                             }
-                            html += `<a href="${result.uncompressed ? result.uncompressed : result.hires}" target="_blank" title="iTunes Artwork for '${result.title}'" onclick="event.preventDefault(); downloadImage('${result.uncompressed ? result.uncompressed : result.hires}', '${result.title.replace(/'/g, "\\'")}', '${entity}')" class="d-block"><img src="${result.url}" alt="iTunes Artwork for '${result.title}'" class="img-fluid"></a>`;
+                            html += `<a href="${result.uncompressed ? result.uncompressed : result.hires}" target="_blank" title="iTunes Artwork for '${result.title}'" onclick="event.preventDefault(); downloadImage('${result.uncompressed ? result.uncompressed : result.hires}', '${result.title.replace(/'/g, "\\'")}', '${entity}', this)" class="d-block"><img src="${result.url}" alt="iTunes Artwork for '${result.title}'" class="img-fluid"></a>`;
 
                             html += '</div>';
 

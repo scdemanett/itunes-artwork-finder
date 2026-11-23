@@ -103,6 +103,34 @@ h1 {
     margin-top: 15px;
 }
 
+.item a.d-block {
+    position: relative;
+}
+
+.item a.downloading {
+    cursor: progress;
+}
+
+.download-progress {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0.75rem;
+    background: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+.download-progress-label {
+    margin-bottom: 0.5rem;
+}
+
+.download-progress .progress {
+    height: 0.5rem;
+}
+
 @media (max-width: 991px) {
     body {
         padding-top: 325px;
