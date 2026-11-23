@@ -1,2 +1,5 @@
 /(Assets)
 /node_modules
+/dist
+/.wrangler
+.dev.vars*

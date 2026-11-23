@@ -1,0 +1,19 @@
+{
+    "$schema": "node_modules/wrangler/config-schema.json",
+    "name": "itunes-artwork-finder",
+    "main": "worker/index.ts",
+    "compatibility_date": "2026-11-01",
+    "assets": {
+        // Vite builds into dist/itunes-artwork-finder so asset paths match the public URL path.
+        "directory": "./dist",
+        "binding": "ASSETS",
+        "html_handling": "auto-trailing-slash"
+    },
+    "observability": {
+        "enabled": true
+    }
+    // At cutover, serve the app at the existing URL (the stevendemanett.com DNS record must be proxied):
+    // "routes": [
+    //     { "pattern": "stevendemanett.com/itunes-artwork-finder*", "zone_name": "stevendemanett.com" }
+    // ]
+}

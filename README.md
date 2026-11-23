@@ -1,9 +1,35 @@
 iTunes Artwork Finder
 =====================
 
-[![Deploy Via FTP](https://github.com/scdemanett/itunes-artwork-finder/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/scdemanett/itunes-artwork-finder/actions/workflows/main.yml)
+Find and download full-resolution artwork for albums, movies, TV shows, apps, books and podcasts from Apple's stores.
 
-This is the JavaScript and PHP code that powers the iTunes Artwork Finder available at [http://bendodson.com/projects/itunes-artwork-finder](http://bendodson.com/projects/itunes-artwork-finder)
+Originally based on Ben Dodson's [iTunes Artwork Finder](https://bendodson.com/projects/itunes-artwork-finder). Rebuilt as a Vite + React front end with a Cloudflare Worker API.
 
-I forked this and polished it up with Bootstrap and Bootstrap Slider [https://github.com/seiyria/bootstrap-slider](https://github.com/seiyria/bootstrap-slider) ready for web deployment on your own site.
+## How it works
 
+- **Front end** (`src/`): React app served as Workers static assets under `/itunes-artwork-finder/`.
+- **Worker** (`worker/`):
+  - `GET /itunes-artwork-finder/api/search?entity=&query=&country=` proxies the iTunes Search / Lookup API and returns normalized results.
+  - `GET /itunes-artwork-finder/api/meta?b=<artBase>&b=…` returns native dimensions and PNG/JPG file sizes (up to 10 per request) using Range requests.
+  - `GET /itunes-artwork-finder/api/download?url=&name=` streams the image from Apple with `Content-Disposition: attachment`, so the browser's own download manager handles progress and the filename. Only `*.mzstatic.com` URLs are accepted.
+- Hi-res images use Apple's largest accepted size, `10000x10000-999`, which is capped at the source's native resolution. PNG is lossless; JPG is smaller.
+
+The base path `/itunes-artwork-finder` is set in three places: `vite.config.ts`, `worker/index.ts` and the route in `wrangler.jsonc`.
+
+## Development
+
+```sh
+npm install
+npm run preview      # build, then serve front end + Worker at http://localhost:8787
+```
+
+For front-end hot reload, run `npm run dev:worker` and `npm run dev` in two terminals (Vite proxies `/api` to the Worker).
+
+## Deployment
+
+```sh
+npx wrangler login
+npm run deploy
+```
+
+This deploys to `itunes-artwork-finder.<subdomain>.workers.dev`. To serve it at `stevendemanett.com/itunes-artwork-finder`, uncomment the `routes` entry in `wrangler.jsonc` (the `stevendemanett.com` DNS record must be proxied) and deploy again. Removing the route sends traffic back to the origin server.
