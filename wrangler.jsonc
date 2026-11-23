@@ -11,11 +11,7 @@
     },
     "observability": {
         "enabled": true
-    },
-    // Serve the app at the existing URL; the rest of the site still comes from the origin server.
-    // The DNS records must be proxied. To roll back, delete these routes in the dashboard.
-    "routes": [
-        { "pattern": "stevendemanett.com/itunes-artwork-finder*", "zone_name": "stevendemanett.com" },
-        { "pattern": "www.stevendemanett.com/itunes-artwork-finder*", "zone_name": "stevendemanett.com" }
-    ]
+    }
+    // Routes are not set here. `npm run deploy` passes DEPLOY_ROUTES from your .env (see .env.example).
+    // With no routes, Wrangler deploys to workers.dev; with routes, workers.dev stays off.
 }

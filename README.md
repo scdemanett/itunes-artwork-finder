@@ -4,7 +4,7 @@ Find and download **full-resolution album covers and artwork from Apple Music, i
 
 **[Use it at stevendemanett.com/itunes-artwork-finder →](https://stevendemanett.com/itunes-artwork-finder/)**
 
-[![iTunes Artwork Finder showing full-resolution Radiohead album covers with PNG and JPG download buttons](docs/screenshot.jpg)](https://stevendemanett.com/itunes-artwork-finder/)
+![iTunes Artwork Finder showing full-resolution Radiohead album covers with PNG and JPG download buttons](docs/screenshot.jpg)
 
 ## Features
 
@@ -25,7 +25,7 @@ A small React app plus a Cloudflare Worker:
 - **Downloads** (`/api/download`): the Worker streams the image from Apple's CDN with `Content-Disposition: attachment`, so the file arrives with the right name. Only `*.mzstatic.com` URLs are accepted, so it can't be used as an open proxy.
 - Artwork URLs use Apple's `10000x10000-999` size. Larger sizes are rejected, and the old `/us/r1000/0/` "uncompressed" source URLs no longer work (HTTP 403).
 
-The app is served under the base path `/itunes-artwork-finder`, set in `vite.config.ts`, `worker/index.ts` and `wrangler.jsonc`.
+The app is served under the base path `/itunes-artwork-finder`, set in `vite.config.ts` and `worker/index.ts`.
 
 ## Run it yourself
 
@@ -45,9 +45,16 @@ npx wrangler login
 npm run deploy
 ```
 
-Static files are served free without counting toward the Workers free plan's 100,000 requests a day; only size lookups and downloads do.
+With no other setup this deploys to `itunes-artwork-finder.<your-subdomain>.workers.dev/itunes-artwork-finder/`.
 
-`wrangler.jsonc` routes the app to `stevendemanett.com/itunes-artwork-finder`. If you fork this, change or remove the `routes` entry (and the canonical and social-preview URLs in `index.html`); without routes, set `"workers_dev": true` to deploy to `itunes-artwork-finder.<your-subdomain>.workers.dev/itunes-artwork-finder/`.
+To serve it on your own domain, copy `.env.example` to `.env` (gitignored) and set:
+
+- `DEPLOY_ROUTES`: comma-separated Worker routes, e.g. `example.com/itunes-artwork-finder*`. The domain must be on Cloudflare with its DNS record proxied. With routes set, the workers.dev address is turned off.
+- `VITE_SITE_URL`: the public URL, used for the canonical link and social-preview tags.
+
+`npm run deploy` builds and passes those routes to `wrangler deploy`. Deploying without them leaves existing routes in place. To take the app off your domain, delete the routes in the Cloudflare dashboard (Workers & Pages → your Worker → Settings → Domains & Routes).
+
+Static files are served free without counting toward the Workers free plan's 100,000 requests a day; only size lookups and downloads do.
 
 ## Credits
 

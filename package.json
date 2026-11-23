@@ -7,7 +7,7 @@
     "dev:worker": "wrangler dev",
     "build": "tsc -b && vite build",
     "preview": "npm run build && wrangler dev",
-    "deploy": "npm run build && wrangler deploy",
+    "deploy": "npm run build && node --env-file-if-exists=.env scripts/deploy.mjs",
     "typecheck": "tsc -b"
   },
   "dependencies": {
