@@ -18,6 +18,11 @@ export default {
             return Response.redirect(`${url.origin}${BASE}/`, 302);
         }
 
+        // Old PHP site links (bookmarks, shared searches) keep working.
+        if (url.pathname === `${BASE}/index.php`) {
+            return Response.redirect(`${url.origin}${BASE}/${url.search}`, 301);
+        }
+
         if (url.pathname.startsWith(`${BASE}/api/`)) {
             if (request.method !== 'GET') {
                 return new Response('Method not allowed', { status: 405, headers: { Allow: 'GET' } });

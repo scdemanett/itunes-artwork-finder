@@ -11,9 +11,11 @@
     },
     "observability": {
         "enabled": true
-    }
-    // At cutover, serve the app at the existing URL (the stevendemanett.com DNS record must be proxied):
-    // "routes": [
-    //     { "pattern": "stevendemanett.com/itunes-artwork-finder*", "zone_name": "stevendemanett.com" }
-    // ]
+    },
+    // Serve the app at the existing URL; the rest of the site still comes from the origin server.
+    // The DNS records must be proxied. To roll back, delete these routes in the dashboard.
+    "routes": [
+        { "pattern": "stevendemanett.com/itunes-artwork-finder*", "zone_name": "stevendemanett.com" },
+        { "pattern": "www.stevendemanett.com/itunes-artwork-finder*", "zone_name": "stevendemanett.com" }
+    ]
 }

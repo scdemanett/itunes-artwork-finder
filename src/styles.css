@@ -224,9 +224,7 @@ a {
 .content {
     flex: 1;
     width: 100%;
-    max-width: 1600px;
-    margin: 0 auto;
-    padding: 24px 16px 40px;
+    padding: 24px 24px 40px;
 }
 
 .notice {
