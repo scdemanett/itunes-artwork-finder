@@ -9,6 +9,9 @@ import { COUNTRIES } from './lib/countries';
 import { useArtworkMeta } from './lib/useArtworkMeta';
 
 const CARD_SIZE_KEY = 'artworkFinder.cardSize';
+const CARD_SIZE_MIN = 220;
+const CARD_SIZE_MAX = 600;
+const CARD_SIZE_DEFAULT = 300;
 
 function paramsFromUrl(): SearchParams {
     const params = new URLSearchParams(window.location.search);
@@ -24,9 +27,9 @@ function paramsFromUrl(): SearchParams {
 function readCardSize(): number {
     try {
         const value = Number(localStorage.getItem(CARD_SIZE_KEY));
-        return value >= 180 && value <= 480 ? value : 280;
+        return value >= CARD_SIZE_MIN && value <= CARD_SIZE_MAX ? value : CARD_SIZE_DEFAULT;
     } catch {
-        return 280;
+        return CARD_SIZE_DEFAULT;
     }
 }
 
@@ -110,7 +113,7 @@ export function App() {
                     <label className="size-control" title="Artwork size">
                         <GridSmallIcon />
                         <span className="sr-only">Artwork size</span>
-                        <input type="range" min={180} max={480} step={10} value={cardSize} onChange={(e) => setCardSize(Number(e.target.value))} />
+                        <input type="range" min={CARD_SIZE_MIN} max={CARD_SIZE_MAX} step={10} value={cardSize} onChange={(e) => setCardSize(Number(e.target.value))} />
                         <GridLargeIcon />
                     </label>
                 </div>
