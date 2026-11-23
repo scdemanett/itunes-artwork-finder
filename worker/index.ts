@@ -1,5 +1,6 @@
 import { handleDownload } from './download';
 import { handleMeta } from './meta';
+import { handlePage } from './page';
 import { json } from './util';
 
 interface Env {
@@ -39,6 +40,11 @@ export default {
                 console.error(error);
                 return json({ error: 'Something went wrong. Please try again.' }, { status: 500 });
             }
+        }
+
+        // The app page itself (routed here by run_worker_first): Markdown for agents, Link headers for discovery.
+        if ((url.pathname === `${BASE}/` || url.pathname === `${BASE}/index.html`) && (request.method === 'GET' || request.method === 'HEAD')) {
+            return handlePage(request, env.ASSETS, BASE);
         }
 
         return env.ASSETS.fetch(request);

@@ -37,6 +37,8 @@ A small React app plus a Cloudflare Worker:
 | `preview_artwork` | Opens the on-screen preview of one result |
 | `download_artwork` | Downloads one result as PNG or JPG through the browser |
 
+Agents that only read pages get a [Markdown version](public/index.md) when they send `Accept: text/markdown` (also at `/itunes-artwork-finder/index.md`), an [`llms.txt`](public/llms.txt), `Link` headers pointing to both, JSON-LD, and static text in the HTML before JavaScript runs.
+
 Everything an agent does happens visibly on the page. WebMCP is a proposed standard; in Chrome it is available behind `chrome://flags/#enable-webmcp-testing` and as an origin trial (set `VITE_WEBMCP_ORIGIN_TRIAL_TOKEN` in `.env` to enable it on your domain). Google's [Model Context Tool Inspector](https://chromewebstore.google.com/detail/model-context-tool-inspec/gbpdfapgefenggkahomfgkhfehlcenpd) extension lets you list and call the tools by hand.
 
 The app is served under the base path `/itunes-artwork-finder`, set in `vite.config.ts` and `worker/index.ts`.

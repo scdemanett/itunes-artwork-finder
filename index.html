@@ -6,6 +6,9 @@
         <title>iTunes Artwork Finder: Full-Resolution Album Covers &amp; Artwork</title>
         <meta name="description" content="Find and download full-resolution album covers and artwork from Apple Music, iTunes, the App Store and Apple Books. See native dimensions, then save a lossless PNG or JPG." />
         <meta name="theme-color" content="#16181d" />
+        <meta name="robots" content="max-image-preview:large" />
+        <link rel="alternate" type="text/markdown" href="/index.md" title="iTunes Artwork Finder (Markdown)" />
+        <link rel="describedby" type="text/plain" href="/llms.txt" />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="iTunes Artwork Finder" />
         <meta property="og:title" content="iTunes Artwork Finder" />
@@ -19,7 +22,24 @@
         <link rel="manifest" href="/site.webmanifest" />
     </head>
     <body>
-        <div id="root"></div>
+        <!-- Static content for crawlers and agents that don't run JavaScript; React replaces it on load. -->
+        <div id="root">
+            <main class="content">
+                <section class="notice">
+                    <h1>iTunes Artwork Finder</h1>
+                    <p>
+                        Find and download full-resolution artwork from Apple's stores: album covers from Apple Music and iTunes, movie and TV posters, app
+                        icons, book and audiobook covers, and podcast artwork. See each image's native dimensions and file sizes, then save a lossless PNG or a
+                        smaller JPG at the largest size Apple has.
+                    </p>
+                    <p>
+                        Search with the form, or link to results with <code>?entity=album&amp;query=Radiohead%20Kid%20A&amp;country=us</code>. This page needs
+                        JavaScript. Agents can read the <a href="/itunes-artwork-finder/index.md">Markdown version</a> or
+                        <a href="/itunes-artwork-finder/llms.txt">llms.txt</a>.
+                    </p>
+                </section>
+            </main>
+        </div>
         <script type="module" src="/src/main.tsx"></script>
     </body>
 </html>

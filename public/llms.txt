@@ -1,0 +1,26 @@
+# iTunes Artwork Finder
+
+> Free web tool to find and download full-resolution artwork from Apple's stores: album covers (Apple Music / iTunes), movie and TV posters, app icons, book and audiobook covers, and podcast artwork. It shows each image's native dimensions and file sizes, then downloads a lossless PNG or a smaller JPG at the largest size Apple has (often 3000 × 3000 or 4000 × 4000).
+
+Search runs in the visitor's browser against Apple's iTunes Search API. Results can be linked directly with URL parameters: `?entity=<type>&query=<terms>&country=<store>`, for example `?entity=album&query=Radiohead%20Kid%20A&country=us`. Types: album, idAlbum (Apple album ID), software (iPhone apps), iPadSoftware, macSoftware, id (Apple movie ID), audiobook, ebook, musicVideo, movie, podcast, shortFilm, tvSeason. Country is a two-letter store code (us, gb, jp, ...).
+
+Album downloads are named `Artist - Album (Edition) - Front (Hi-Res).png`. "(Hi-Res)" means at least 1000 px on the short side; non-square artwork is labelled "(Original)".
+
+## Docs
+
+- [About this tool (Markdown)](/itunes-artwork-finder/index.md): what it does, how to search, file formats and naming
+- [Source code and README](https://github.com/scdemanett/itunes-artwork-finder): how it works and how to run your own copy
+
+## Agent tools (WebMCP)
+
+In browsers that support WebMCP (Chrome origin trial), the page registers these tools with `document.modelContext`. Results appear visibly on the page.
+
+- `search_artwork(query, type?, country?)`: search and show results; returns result ids, titles, artists and preview URLs
+- `get_artwork_details(id)`: native width and height, whether it is square and high resolution, PNG/JPG sizes, download filenames and full-size image URLs
+- `preview_artwork(id)`: open the large on-screen preview
+- `download_artwork(id, format?)`: download the PNG (default) or JPG through the browser
+
+## Optional
+
+- [iTunes Search API documentation](https://performance-partners.apple.com/search-api): the Apple API the search uses
+- [WebMCP explainer](https://github.com/webmachinelearning/webmcp): the proposed standard behind the agent tools
