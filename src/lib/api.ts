@@ -1,4 +1,4 @@
-import { sanitizeFilename } from '../../shared/filename';
+import { houseCoverFilename, normalizeCharacters, sanitizeFilename } from '../../shared/filename';
 import { buildSearchUrl, toResults, type ITunesItem } from '../../shared/itunes';
 import { artUrl, HIRES_SIZE, type ArtworkMeta, type ArtworkResult, type Entity } from '../../shared/types';
 
@@ -50,16 +50,20 @@ export function previewUrl(result: ArtworkResult, size: number): string {
     return artUrl(result.artBase, `${size}x${size}bb`, 'jpg');
 }
 
-/** Filename without extension; the Worker adds the extension from the real content type. */
-export function filenameFor(result: ArtworkResult, entity: Entity): string {
+/**
+ * Filename without extension; the Worker adds the extension from the real content type.
+ * Albums follow the house cover naming rules (audio-archive skill): "Artist - Album (Edition) - Front (Hi-Res)".
+ */
+export function filenameFor(result: ArtworkResult, entity: Entity, meta?: ArtworkMeta): string {
     if ((entity === 'album' || entity === 'idAlbum') && result.artist) {
-        return sanitizeFilename(`${result.artist} - ${result.title} - Front (Hi-Res)`);
+        return houseCoverFilename(result.artist, result.title, meta);
     }
-    return sanitizeFilename(result.artist ? `${result.title} (by ${result.artist})` : result.title);
+    const title = normalizeCharacters(result.artist ? `${result.title} (by ${result.artist})` : result.title);
+    return sanitizeFilename(title);
 }
 
-export function downloadUrl(result: ArtworkResult, entity: Entity, format: Format): string {
-    const params = new URLSearchParams({ url: hiresUrl(result, format), name: filenameFor(result, entity) });
+export function downloadUrl(result: ArtworkResult, entity: Entity, format: Format, meta?: ArtworkMeta): string {
+    const params = new URLSearchParams({ url: hiresUrl(result, format), name: filenameFor(result, entity, meta) });
     return `${API}/download?${params}`;
 }
 

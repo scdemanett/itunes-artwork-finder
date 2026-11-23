@@ -73,7 +73,7 @@ export function PreviewDialog({ result, entity, meta, onClose, onPrev, onNext }:
                             {result.artist && <p className="card-artist">{result.artist}</p>}
                             <p className="card-meta">{metaLabel(meta)}</p>
                             <p className="preview-filename" title="Downloads are saved with this name">
-                                {filenameFor(result, entity)}
+                                {filenameFor(result, entity, typeof meta === 'object' ? meta : undefined)}
                             </p>
                         </div>
                         <ArtworkActions result={result} entity={entity} meta={meta} />

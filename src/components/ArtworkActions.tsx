@@ -22,7 +22,7 @@ export function ArtworkActions({ result, entity, meta }: Props) {
     };
 
     const sizes = typeof meta === 'object' ? meta : undefined;
-    const filename = filenameFor(result, entity);
+    const filename = filenameFor(result, entity, sizes);
 
     const onDownload = (format: Format) => {
         setStarting(format);
@@ -42,7 +42,7 @@ export function ArtworkActions({ result, entity, meta }: Props) {
     const downloadButton = (format: Format, label: string, hint: string, bytes: number | undefined, primary: boolean) => (
         <a
             className={`btn ${primary ? 'btn-primary' : 'btn-secondary'}`}
-            href={downloadUrl(result, entity, format)}
+            href={downloadUrl(result, entity, format, sizes)}
             download
             onClick={() => onDownload(format)}
             title={`${hint}\nSaves as: ${filename}.${format}`}
