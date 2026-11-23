@@ -10,7 +10,7 @@
         "html_handling": "auto-trailing-slash",
         // The Worker handles the app page itself so it can serve Markdown to agents (Accept: text/markdown)
         // and add discovery Link headers. Every other static file is served directly.
-        "run_worker_first": ["/itunes-artwork-finder/", "/itunes-artwork-finder/index.html"]
+        "run_worker_first": ["/itunes-artwork-finder/", "/itunes-artwork-finder/index.html", "/itunes-artwork-finder/index.md"]
     },
     "observability": {
         "enabled": true

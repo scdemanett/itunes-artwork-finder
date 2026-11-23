@@ -32,6 +32,21 @@ function discoveryLinks(base: string): string {
     ].join(', ');
 }
 
+/** Link header for the Markdown version: the HTML page is canonical. */
+function markdownLinks(base: string): string {
+    return `<${base}/>; rel="canonical", <${base}/>; rel="alternate"; type="text/html", <${base}/llms.txt>; rel="describedby"; type="text/plain"`;
+}
+
+/** /index.md requested directly: add the same Link header the negotiated Markdown gets. */
+export async function handleMarkdownFile(request: Request, assets: Fetcher, base: string): Promise<Response> {
+    const file = await assets.fetch(request);
+    const headers = new Headers(file.headers);
+    if (file.ok) {
+        headers.set('Link', markdownLinks(base));
+    }
+    return new Response(file.body, { status: file.status, statusText: file.statusText, headers });
+}
+
 export async function handlePage(request: Request, assets: Fetcher, base: string): Promise<Response> {
     const url = new URL(request.url);
 
@@ -41,7 +56,7 @@ export async function handlePage(request: Request, assets: Fetcher, base: string
             const headers = new Headers(markdown.headers);
             headers.set('Content-Type', 'text/markdown; charset=utf-8');
             headers.set('Vary', 'Accept');
-            headers.set('Link', `<${base}/>; rel="alternate"; type="text/html", <${base}/llms.txt>; rel="describedby"; type="text/plain"`);
+            headers.set('Link', markdownLinks(base));
             headers.delete('ETag');
             return new Response(markdown.body, { status: 200, headers });
         }

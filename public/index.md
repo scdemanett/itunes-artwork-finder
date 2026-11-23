@@ -1,6 +1,8 @@
 ---
 title: iTunes Artwork Finder
 description: Find and download full-resolution album covers and artwork from Apple Music, iTunes, the App Store and Apple Books, as lossless PNG or JPG.
+doc_version: 2.0
+last_updated: 2026-11-23
 ---
 
 # iTunes Artwork Finder
@@ -53,3 +55,7 @@ In browsers that support [WebMCP](https://github.com/webmachinelearning/webmcp),
 More detail: [llms.txt](/itunes-artwork-finder/llms.txt). Source code: [GitHub](https://github.com/scdemanett/itunes-artwork-finder).
 
 Artwork belongs to its respective owners and is provided by Apple. This site is not affiliated with Apple.
+
+## Sitemap
+
+See the full [sitemap](/sitemap.md) for all pages.
