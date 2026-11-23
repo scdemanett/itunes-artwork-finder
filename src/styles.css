@@ -7,9 +7,10 @@
     --border: #3a3f48;
     --text: #eef0f3;
     --text-muted: #a3a9b4;
-    --accent: #fa4a64;
-    --accent-hover: #ff6a80;
-    --accent-text: #fff;
+    /* Blue from the logo; dark text keeps contrast high on this light blue. */
+    --accent: #21c8fe;
+    --accent-hover: #5fd8ff;
+    --accent-text: #04151d;
     --focus: #7fb4ff;
     --radius: 10px;
     --card-size: 280px;
@@ -66,43 +67,54 @@ a {
 }
 
 .site-header-inner {
-    max-width: 1600px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 12px 16px;
+    padding: 14px 16px 16px;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     align-items: center;
-    gap: 12px 20px;
+    gap: 12px;
 }
 
 .brand {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-weight: 700;
-    font-size: 1.1rem;
+    gap: 12px;
+    font-weight: 600;
+    font-size: clamp(1.5rem, 1.1rem + 1.6vw, 2.25rem);
+    line-height: 1.2;
     text-decoration: none;
-    white-space: nowrap;
+    text-align: center;
 }
 
+.brand img {
+    width: 1.3em;
+    height: 1.3em;
+}
+
+/* One centered row on wide screens; stacked full-width fields below 992px (see media query). */
 .search {
-    flex: 1 1 560px;
+    width: 100%;
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    justify-content: center;
+    gap: 10px;
 }
 
 .field {
     display: flex;
 }
 
-.field-query {
-    flex: 1 1 220px;
+.field-entity {
+    flex: 0 1 240px;
 }
 
-.field-entity,
+.field-query {
+    flex: 1 1 320px;
+    max-width: 380px;
+}
+
 .field-country {
-    flex: 0 1 200px;
+    flex: 0 1 280px;
 }
 
 .field select,
@@ -120,12 +132,12 @@ a {
 .size-control {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
     color: var(--text-muted);
 }
 
 .size-control input {
-    width: 120px;
+    width: 220px;
     accent-color: var(--accent);
 }
 
@@ -526,18 +538,28 @@ a {
     border-top: 1px solid var(--border);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 991px) {
+    /* The stacked header is tall, so let it scroll away instead of covering results. */
     .site-header {
         position: static;
     }
 
+    .search {
+        flex-direction: column;
+        align-items: stretch;
+        max-width: 640px;
+    }
+
     .field-entity,
+    .field-query,
     .field-country {
-        flex: 1 1 140px;
+        flex: none;
+        max-width: none;
     }
 
     .search-submit {
-        flex: 1 1 100%;
+        align-self: center;
+        min-width: 180px;
     }
 
     .size-control {
