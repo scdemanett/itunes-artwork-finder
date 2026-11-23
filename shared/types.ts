@@ -29,11 +29,6 @@ export interface ArtworkResult {
     storeUrl?: string;
 }
 
-export interface SearchResponse {
-    results: ArtworkResult[];
-    error?: string;
-}
-
 export interface ArtworkMeta {
     width?: number;
     height?: number;

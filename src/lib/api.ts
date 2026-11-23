@@ -1,5 +1,6 @@
 import { sanitizeFilename } from '../../shared/filename';
-import { artUrl, HIRES_SIZE, type ArtworkMeta, type ArtworkResult, type Entity, type SearchResponse } from '../../shared/types';
+import { buildSearchUrl, toResults, type ITunesItem } from '../../shared/itunes';
+import { artUrl, HIRES_SIZE, type ArtworkMeta, type ArtworkResult, type Entity } from '../../shared/types';
 
 const API = `${import.meta.env.BASE_URL}api`;
 
@@ -10,17 +11,23 @@ export interface SearchParams {
 }
 
 export async function search(params: SearchParams, signal?: AbortSignal): Promise<ArtworkResult[]> {
-    const response = await fetch(`${API}/search?${new URLSearchParams({ ...params })}`, { signal });
-    let data: SearchResponse;
+    let response: Response;
     try {
-        data = (await response.json()) as SearchResponse;
-    } catch {
-        throw new Error(`Search failed (${response.status}). Please try again.`);
+        response = await fetch(buildSearchUrl(params.entity, params.query, params.country), { signal });
+    } catch (error) {
+        if (signal?.aborted) {
+            throw error;
+        }
+        throw new Error("Couldn't reach Apple's search service. Check your connection and try again.");
     }
-    if (data.error) {
-        throw new Error(data.error);
+    if (response.status === 429) {
+        throw new Error("Apple's search service is limiting requests. Wait a minute and try again.");
     }
-    return data.results;
+    if (!response.ok) {
+        throw new Error(`Apple's search service returned an error (${response.status}). Please try again.`);
+    }
+    const data = (await response.json()) as { results?: ITunesItem[] };
+    return toResults(params.entity, data.results ?? []);
 }
 
 export async function fetchMeta(artBases: string[], signal?: AbortSignal): Promise<Record<string, ArtworkMeta>> {

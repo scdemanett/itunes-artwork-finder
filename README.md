@@ -7,9 +7,8 @@ Originally based on Ben Dodson's [iTunes Artwork Finder](https://bendodson.com/p
 
 ## How it works
 
-- **Front end** (`src/`): React app served as Workers static assets under `/itunes-artwork-finder/`.
+- **Front end** (`src/`): React app served as Workers static assets under `/itunes-artwork-finder/`. It calls the iTunes Search / Lookup API directly from the browser (`shared/itunes.ts`), because Apple rate-limits requests from Cloudflare's shared Worker IPs.
 - **Worker** (`worker/`):
-  - `GET /itunes-artwork-finder/api/search?entity=&query=&country=` proxies the iTunes Search / Lookup API and returns normalized results.
   - `GET /itunes-artwork-finder/api/meta?b=<artBase>&b=…` returns native dimensions and PNG/JPG file sizes (up to 10 per request) using Range requests.
   - `GET /itunes-artwork-finder/api/download?url=&name=` streams the image from Apple with `Content-Disposition: attachment`, so the browser's own download manager handles progress and the filename. Only `*.mzstatic.com` URLs are accepted.
 - Hi-res images use Apple's largest accepted size, `10000x10000-999`, which is capped at the source's native resolution. PNG is lossless; JPG is smaller.

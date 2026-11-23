@@ -1,6 +1,5 @@
 import { handleDownload } from './download';
 import { handleMeta } from './meta';
-import { handleSearch } from './search';
 import { json } from './util';
 
 interface Env {
@@ -25,8 +24,6 @@ export default {
             }
             try {
                 switch (url.pathname.slice(BASE.length)) {
-                    case '/api/search':
-                        return await handleSearch(url);
                     case '/api/meta':
                         return await handleMeta(url);
                     case '/api/download':

@@ -1,7 +1,9 @@
-import { isEntity, type ArtworkResult, type Entity, type SearchResponse } from '../shared/types';
-import { json, UPSTREAM_HEADERS } from './util';
+import type { ArtworkResult, Entity } from './types';
 
-interface ITunesItem {
+// Searches run in the visitor's browser: Apple rate-limits (HTTP 429) requests from Cloudflare's
+// shared Worker IPs, and the iTunes Search API allows cross-origin requests.
+
+export interface ITunesItem {
     kind?: string;
     wrapperType?: string;
     collectionType?: string;
@@ -15,7 +17,7 @@ interface ITunesItem {
     trackViewUrl?: string;
 }
 
-function buildUpstreamUrl(entity: Entity, query: string, country: string): string {
+export function buildSearchUrl(entity: Entity, query: string, country: string): string {
     const params = new URLSearchParams({ country, limit: '25' });
     if (entity === 'id' || entity === 'idAlbum') {
         params.set('id', query);
@@ -85,43 +87,15 @@ function toResult(entity: Entity, item: ITunesItem): ArtworkResult | null {
     };
 }
 
-export async function handleSearch(url: URL): Promise<Response> {
-    const entityParam = url.searchParams.get('entity') || 'album';
-    const query = (url.searchParams.get('query') || '').trim();
-    const country = (url.searchParams.get('country') || 'us').toLowerCase();
-
-    const fail = (error: string, status: number) => json({ results: [], error } satisfies SearchResponse, { status });
-
-    if (!isEntity(entityParam)) {
-        return fail('Unknown search type.', 400);
-    }
-    if (!query) {
-        return fail('Please enter a search query.', 400);
-    }
-    if (!/^[a-z]{2}$/.test(country)) {
-        return fail('Unknown country.', 400);
-    }
-
-    const upstream = await fetch(buildUpstreamUrl(entityParam, query, country), {
-        headers: UPSTREAM_HEADERS,
-        cf: { cacheTtl: 3600, cacheEverything: true },
-    });
-    if (!upstream.ok) {
-        return fail(`Apple's search service returned an error (${upstream.status}). Please try again.`, 502);
-    }
-
-    const data = (await upstream.json()) as { results?: ITunesItem[] };
+export function toResults(entity: Entity, items: ITunesItem[]): ArtworkResult[] {
     const seen = new Set<string>();
     const results: ArtworkResult[] = [];
-    for (const item of data.results ?? []) {
-        const result = toResult(entityParam, item);
+    for (const item of items) {
+        const result = toResult(entity, item);
         if (result && !seen.has(result.artBase)) {
             seen.add(result.artBase);
             results.push(result);
         }
     }
-
-    return json({ results } satisfies SearchResponse, {
-        headers: { 'Cache-Control': 'public, max-age=300' },
-    });
+    return results;
 }
